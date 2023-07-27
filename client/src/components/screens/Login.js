@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import {Link} from 'react-router-dom';
 import Mo from 'materialize-css';
+import { UserContext } from '../../App';
 
  
 export const Login = () => {
+  const [state,dispatch] = useContext(UserContext)
   const [email,setemail] = useState("");
   const [password,setpassword] = useState("");
   const PostData = () =>{
@@ -22,6 +24,10 @@ export const Login = () => {
         Mo.toast({html:data.error,classes:"#c62828 red darken-3"})
       }
       else{
+        localStorage.setItem('jwt',data.token),
+        localStorage.setItem('user',JSON.stringify(data.user))
+        dispatch({type:"USER",payload:data.user})
+
         Mo.toast({html:"signin successfully",classes:"#e93d8 purple lighten-3"})
         // history.push("/signin")
       }
