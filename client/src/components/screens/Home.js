@@ -1,66 +1,97 @@
-import React from 'react';
-
+import { set } from 'mongoose';
+import React, { useEffect, useState } from 'react';
+import { UserContext } from '../../App';
 
 export const Home = () => {
+  const {state,dispatch} = UserContext(UserContext)
+  const [data,setData] = useState([])
+  useEffect(()=>{
+    fetch('/allpost',{
+      headers : {
+        "Authorization" : "Bearer" + localStorage.getItem("jwt")
+      }
+    }).then(res=>res.json()).then(result=>{
+      console.log(result)
+      setData(result.post)
+    })
+  })
+
+  const likePost = (id) =>{
+    fetch('/like',{
+      method : "put",
+      header : {
+        "Content-Type":"application/json",
+        "Authorization" : "Bearer" + localStorage.getItem("jwt")
+      },
+      body: JSON.stringify({
+        postId:id
+      })
+
+    }).then(res=>res.json())
+    .then(result=>{
+      const newData = data.map(item=>{
+        if(item._id==result._id){
+          return result
+        }else{
+          return item
+        }
+      })
+      setData(newData)
+    }).catch(err=>{
+      console.log(err)
+    })
+  }
+
+  const unlikePost = (id) =>{
+    fetch('/unlike',{
+      method : "put",
+      header : {
+        "Content-Type":"application/json",
+        "Authorization" : "Bearer" + localStorage.getItem("jwt")
+      },
+      body: JSON.stringify({
+        postId:id
+      })
+
+    }).then(res=>res.json())
+    .then(result=>{
+      const newData = data.map(item=>{
+        if(item._id==result._id){
+          return result
+        }else{
+          return item
+        }
+      })
+      setData(newData)
+    }).catch(err=>{
+      console.log(err)
+    })
+  }
+
   return (
     <div className='"home'>
-      <div className='card home-card'>
+     {data.map(item=>{
+      return(
+        <div className='card home-card' key = {item._id}>
         <h5>
-          Patrick Jane
+          {item.postedby.name}
         </h5>
         <div className='card-image'>
-          <img src = "https://images.unsplash.com/photo-1610897304452-d64c92b21246?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHdhbGxhcHBlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=600&q=60"/>
+          <img src ={item.photo} />
         </div>
         <div className='card-content'>
-        <i class="material-icons" style = {{color:"red"}}>favorite</i>
-          <h5>Title</h5>
-          <p>This is an amazing post</p>
+          {item.likes.includes(state._id)?
+          <i class="material-icons" onClick={()=>{unlikePost(item._id)}}>thumb_down</i> : 
+          <i class="material-icons" onClick={()=>{likePost(item._id)}}>thumb_up</i>
+          }
+          <h6>{item.likes.length} likes</h6>
+          <h5>{item.title}</h5>
+          <p>{item.body}</p>
           <input type = "text" placeholder='add a comment'></input>
         </div>
       </div>
-      <div className='card home-card'>
-        <h5>
-          Patrick Jane
-        </h5>
-        <div className='card-image'>
-          <img src = "https://images.unsplash.com/photo-1610897304452-d64c92b21246?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHdhbGxhcHBlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=600&q=60"/>
-        </div>
-        <div className='card-content'>
-        <i class="material-icons" style = {{color:"red"}}>favorite</i>
-          <h5>Title</h5>
-          <p>This is an amazing post</p>
-          <input type = "text" placeholder='add a comment'></input>
-        </div>
-      </div>
-      <div className='card home-card'>
-        <h5>
-          Patrick Jane
-        </h5>
-        <div className='card-image'>
-          <img src = "https://images.unsplash.com/photo-1610897304452-d64c92b21246?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHdhbGxhcHBlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=600&q=60"/>
-        </div>
-        <div className='card-content'>
-        <i class="material-icons" style = {{color:"red"}}>favorite</i>
-          <h5>Title</h5>
-          <p>This is an amazing post</p>
-          <input type = "text" placeholder='add a comment'></input>
-        </div>
-      </div>
-      <div className='card home-card'>
-        <h5>
-          Patrick Jane
-        </h5>
-        <div className='card-image'>
-          <img src = "https://images.unsplash.com/photo-1610897304452-d64c92b21246?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHdhbGxhcHBlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=600&q=60"/>
-        </div>
-        <div className='card-content'>
-        <i class="material-icons" style = {{color:"red"}}>favorite</i>
-          <h5>Title</h5>
-          <p>This is an amazing post</p>
-          <input type = "text" placeholder='add a comment'></input>
-        </div>
-      </div>
-     
+      )
+     })}  
     </div>
   )
 }

@@ -1,4 +1,3 @@
-import Navbar from './components/Navbar';
 import {Home} from './components/screens/Home';
 import { Login } from './components/screens/Login';
 import { Signup } from './components/screens/Signup';
@@ -8,6 +7,7 @@ import './App.css';
 import CreatePost from './components/screens/CreatePost';
 import { createContext, useContext, useEffect, useReducer } from 'react';
 import { initialState, reducer } from './Reducers/userReducer';
+import Navbar from './components/navbar';
 
 
 export const UserContext = createContext()

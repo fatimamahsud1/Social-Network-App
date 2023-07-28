@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom';
 import { UserContext } from '../App';
 
 const Navbar = () => {
+  // const history = useHistory()
   const {state,dispatch} = useContext(UserContext)
   const renderList = () => {
     if(state){
@@ -10,6 +11,16 @@ const Navbar = () => {
         <>
      <li><Link to="/profile">Profile</Link></li>
         <li><Link to="/create">CreatePost</Link></li>
+        <li>
+        <button 
+        onClick={()=>{
+          localStorage.clear()
+          dispatch({type:"CLEAR"})
+          // history.push('/signin')
+        }}
+            className = "btn waves-effect waves-light #e57373 blue lighten-2 " type="submit" name ="action">Logout
+                </button>
+        </li>
     
     </>
       ]
