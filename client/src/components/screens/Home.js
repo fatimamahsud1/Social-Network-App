@@ -68,6 +68,51 @@ export const Home = () => {
     })
   }
 
+
+  const deletePost = (postId) => {
+    fetch(`/deletepost/${postId}`,{
+      method : "delete",
+      headers : {
+        "Authorization"  : "Bearer" +  localStorage.getItem("jwt")
+      }
+    }).then(res=>res.json())
+    .then(result=>{
+      const newData = data.filter(item=>{
+        return item._id!==result.id
+      })
+      setData(newData)
+    })
+  }
+
+
+  const makeComment = (text,postId)=>{
+    fetch('/comment',{
+      method : "put",
+      headers : {
+        "Content-Type"  : "application/json",
+        "Authorization"  : "Bearer" + localStorage.getItem('jwt')
+      },
+      body :JSON.stringify({
+        postId,
+        name: localStorage.getItem('user').name,
+        text
+      })
+    }).then(res=>res.json()).then(result=>{
+      console.log(result)
+      const newData = data.map(item=>{
+        if(item._id==result._id){
+          return result
+        }else{
+          return item
+        }
+      })
+      setData(newData)
+ 
+    }).catch(err=>{
+      console.log(err)
+  })
+  }
+
   return (
     <div className='"home'>
      {data.map(item=>{
@@ -75,6 +120,7 @@ export const Home = () => {
         <div className='card home-card' key = {item._id}>
         <h5>
           {item.postedby.name}
+          <i class="material-icons"  style = {{float : 'right'}}onClick={()=>{deletePost(item._id)}}>delete</i> : 
         </h5>
         <div className='card-image'>
           <img src ={item.photo} />
@@ -87,6 +133,19 @@ export const Home = () => {
           <h6>{item.likes.length} likes</h6>
           <h5>{item.title}</h5>
           <p>{item.body}</p>
+          {
+            items.comments.map(record=>{
+              return(
+                <h6><span style={{fontWeight:'600'}}>{record.postedby.name}</span>{record.text}</h6>
+              )
+            })
+          }
+          <from onSubmit = {(e)=>{
+            e.preventDefault()
+            makeComment(e.target[0].value,item._id)
+          }}>
+
+          </from>
           <input type = "text" placeholder='add a comment'></input>
         </div>
       </div>

@@ -8,6 +8,7 @@ mongoose.connect(MONGOURI);;
 
 require("./models/user.js");
 require("./models/post.js");
+
 mongoose.connection.on('connected',()=>{
     console.log("We are connected to the server ie mongodb")
 })
@@ -20,6 +21,8 @@ mongoose.connection.on('error',()=>{
 app.use(express.json()); 
 app.use(require('./routes/authen.js'))
 app.use(require('./routes/post.js'))
+app.use(require('./routes/user.js'))
+
 
 
 app.listen(PORT,()=>{
