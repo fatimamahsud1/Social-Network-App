@@ -1,6 +1,7 @@
 import { set } from 'mongoose';
 import React, { useEffect, useState } from 'react';
 import { UserContext } from '../../App';
+import { Link } from 'react-router-dom';
 
 export const Home = () => {
   const {state,dispatch} = UserContext(UserContext)
@@ -118,9 +119,10 @@ export const Home = () => {
      {data.map(item=>{
       return(
         <div className='card home-card' key = {item._id}>
-        <h5>
+        <h5><Link to = {"/profile/"+item.postedby._id}>
           {item.postedby.name}
           <i class="material-icons"  style = {{float : 'right'}}onClick={()=>{deletePost(item._id)}}>delete</i> : 
+          </Link>
         </h5>
         <div className='card-image'>
           <img src ={item.photo} />

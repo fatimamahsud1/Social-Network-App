@@ -8,6 +8,7 @@ import CreatePost from './components/screens/CreatePost';
 import { createContext, useContext, useEffect, useReducer } from 'react';
 import { initialState, reducer } from './Reducers/userReducer';
 import Navbar from './components/navbar';
+import { UserProfile } from './components/screens/UserProfile';
 
 
 export const UserContext = createContext()
@@ -26,11 +27,13 @@ const Routing = () => {
   return(
     <Switch>
     <Routes>
-    <Route path="/" element={<Home />} />
+    <Route exact path="/" element={<Home />} />
     <Route path="/signin" element={<Login />} />
     <Route path="/signup" element={<Signup />} />
-    <Route path="/profile" element={<Profile />} />
+    <Route exact path="/profile" element={<Profile />} />
     <Route path="/create" element={<CreatePost />} />
+    <Route path="/profile/:userid" element={<UserProfile />} />
+
   </Routes>
   </Switch>
   )
