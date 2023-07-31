@@ -3,11 +3,13 @@ import { UserContext } from '../../App';
 import { useParams } from 'react-router-dom';
 
 export const UserProfile = () => {
+  const [showfollow,setshowfollow] = useState(state?!state.following.includes(userid):true)
   const {state,dispatch} = useContext(UserContext)
   const [userprofile,setuserprofile] = useState("")
   const [useremail,setuseremail] = useState("")
   const [Profile,setProfile] = useState("")
   const [posts,setposts] = useState([])
+  const [prof,setProf] = useState(null)
 
 
 
@@ -25,14 +27,75 @@ export const UserProfile = () => {
         setuseremail(result.user.email)
         setProfile(result.posts.length)
         setposts(result.posts)
+        setProf(result)
 
 
     })
 
   },[])
 
+  const followUser = () => {
+    fetch('/follow',{
+      method : "put",
+      headers : {
+        "Content-Type" : "application/json",
+        "Authorization"  : "Bearer" + localStorage.getItem('jwt')
+      },
+      body:JSON.stringify({
+        followId : userid
+      })
+
+    }).then(res=>res.json())
+    .then(data=>{
+      dispatch({type:"UPDATE",payload:{following:data.following,followers:data.followers}})
+      localStorage.setItem("user",JSON.stringify(data))
+      setProf((prevState)=>{
+        return{
+          user:{
+            ...prevState.user,
+            followers:[...prevState.user.followers,data._id]
+          }
+        }
+      })
+      setshowfollow(false)
+    })
+  }
+
+  const unfollowUser = () => {
+    fetch('/unfollow',{
+      method : "put",
+      headers : {
+        "Content-Type" : "application/json",
+        "Authorization"  : "Bearer" + localStorage.getItem('jwt')
+      },
+      body:JSON.stringify({
+        followId : userid
+      })
+
+    }).then(res=>res.json())
+    .then(data=>{
+      dispatch({type:"UPDATE",payload:{following:data.following,followers:data.followers}})
+      localStorage.setItem("user",JSON.stringify(data))
+      setProf((prevState)=>{
+        const newFollower = prevState.user.followers.filter(item=>item!=data._id)
+        return{
+          user:{
+            ...prevState,
+            users:{
+              ...prevState.user,
+              followers:newFollower
+            }
+          }
+        }
+      })
+      setshowfollow(true)
+      window.location.reload()
+
+    })
+  }
 
   return (
+
     <>
     {
         posts?
@@ -46,10 +109,24 @@ export const UserProfile = () => {
         </div>
         <div style = {{display:"flex",justifyContent:'space-around',width:"108%"}}>
           <h6>{Profile}</h6>
-          <h6>30 Followers</h6>
-          <h6>30 Followings</h6>
+          <h6>{prof.user===undefined ? "loading" : prof.user.followers===undefined?"loading...":prof.user.followers.length} Followers</h6>
+          <h6>{prof.user===undefined ? "loading" : prof.user.following===undefined ? "loading...":prof.user.following.length} Followings</h6>
 
         </div>
+        {!JSON.parse(localStorage.getItem("user")).following.includes(userid) && showfollow ? <button 
+            onClick={()=>followUser()}
+            className = "btn waves-effect waves-light #e57373 blue lighten-2 " type="submit" name ="action">Follow
+                </button> :<button 
+                  onClick={()=>unfollowUser()}
+                  className = "btn waves-effect waves-light #e57373 red lighten-2 " type="submit" name ="action">Unfollow
+                      </button>  }
+        {/* {showfollow ?<button 
+            onClick={()=>followUser()}
+            className = "btn waves-effect waves-light #e57373 blue lighten-2 " type="submit" name ="action">Follow
+                </button> :
+                  } */}
+        
+              
       
       
       </div>

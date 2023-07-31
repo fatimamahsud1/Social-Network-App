@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
+const {ObjectId} = mongoose.Schema.Types; 
+
 const userSchema = new mongoose.Schema({
     name:{
         type:String,
-        required:true,
+        required:true,l
     },
     email:{
         type:String,
@@ -14,6 +16,9 @@ const userSchema = new mongoose.Schema({
         required:true,
 
     },
+    followers:[{type:ObjectId, ref:"User"}],
+    following:[{type:ObjectId, ref:"User"}]
+
 })
 
 module.exports = mongoose.model("User",userSchema);
