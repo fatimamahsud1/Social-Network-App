@@ -10,7 +10,9 @@ const Navbar = () => {
       return[
         <>
      <li><Link to="/profile">Profile</Link></li>
-        <li><Link to="/create">CreatePost</Link></li>
+    <li><Link to="/create">CreatePost</Link></li>
+    <li><Link to="/myfollowersposts">My Followings Posts</Link></li>
+
         <li>
         <button 
         onClick={()=>{

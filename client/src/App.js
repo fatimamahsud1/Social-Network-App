@@ -9,6 +9,7 @@ import { createContext, useContext, useEffect, useReducer } from 'react';
 import { initialState, reducer } from './Reducers/userReducer';
 import Navbar from './components/navbar';
 import { UserProfile } from './components/screens/UserProfile';
+import { SubscribedUserPosts } from './components/screens/SubscribedUserPosts';
 
 
 export const UserContext = createContext()
@@ -33,6 +34,9 @@ const Routing = () => {
     <Route exact path="/profile" element={<Profile />} />
     <Route path="/create" element={<CreatePost />} />
     <Route path="/profile/:userid" element={<UserProfile />} />
+    <Route path="/myfollowersposts" element={<SubscribedUserPosts/>} />
+
+
 
   </Routes>
   </Switch>
